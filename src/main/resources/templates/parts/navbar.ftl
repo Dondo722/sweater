@@ -31,12 +31,6 @@
             </#if>
         </ul>
         <div class="navbar-text mr-3">${name}</div>
-        <#if user??>
-            <@l.logout/>
-        <#else>
-            <form action="/login">
-                <button class="btn btn-primary" type="">Sign in</button>
-            </form>
-        </#if>
+        <@l.logout/>
     </div>
 </nav>

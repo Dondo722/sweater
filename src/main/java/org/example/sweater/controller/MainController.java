@@ -94,10 +94,12 @@ public class MainController {
                                @PathVariable(name = "id") User user,
                                Model model,
                                @RequestParam(required = false) Message message) {
-        if (message != null) {
-            model.addAttribute("message", message);
-        }
         Set<Message> messages = user.getMessages();
+        model.addAttribute("userChannel",user);
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
+        model.addAttribute("message", message);
         model.addAttribute("messages", messages);
         model.addAttribute("isCurrentUser", currentUser.equals(user));
 
