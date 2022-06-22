@@ -41,4 +41,6 @@ public interface MessageRepository extends CrudRepository<Message,Long> {
             " where m.author = :author" +
             " group by m")
     Page<MessageDto> findByUser(Pageable pageable, @Param("author") User author ,@Param("user") User user);
+
+    void deleteById(Long id);
 }

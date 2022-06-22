@@ -1,6 +1,7 @@
 package org.example.sweater.controller;
 
 import org.example.sweater.domain.Message;
+import org.example.sweater.domain.Role;
 import org.example.sweater.domain.User;
 import org.example.sweater.domain.dto.MessageDto;
 import org.example.sweater.repos.MessageRepository;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -150,12 +152,31 @@ public class MessageController {
             likes.add(currentUser);
         }
 
-        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+        UriComponents components = getUriComponents(redirectAttributes, referer);
 
+        return "redirect:" + components.getPath();
+    }
+
+    @GetMapping("/messages/{user}/{message}/delete")
+    public String deleteUserMessage(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Message message,
+            @PathVariable User user,
+            RedirectAttributes redirectAttributes,
+            @RequestHeader(required = false) String referer) {
+        if (currentUser.getId().equals(user.getId()) || currentUser.getRoles().contains(Role.ADMIN)) {
+            messageRepository.deleteById(message.getId());
+        }
+        UriComponents components = getUriComponents(redirectAttributes, referer);
+        return "redirect:" + components.getPath();
+    }
+
+
+    private UriComponents getUriComponents(RedirectAttributes redirectAttributes, @RequestHeader(required = false) String referer) {
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
         components.getQueryParams()
                 .entrySet()
                 .forEach(pair -> redirectAttributes.addAttribute(pair.getKey(), pair.getValue()));
-
-        return "redirect:" + components.getPath();
+        return components;
     }
 }
