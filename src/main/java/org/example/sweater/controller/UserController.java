@@ -95,4 +95,12 @@ public class UserController {
         return "subscriptions";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/ban/{user}")
+    public String banUser(@PathVariable User user) {
+        userService.banUser(user);
+        return "redirect:/user-messages/"+user.getId();
+    }
+
+
 }

@@ -125,4 +125,13 @@ public class UserService implements UserDetailsService {
         user.getSubscribers().remove(currentUser);
         userRepo.save(user);
     }
+
+    public void banUser(User user) {
+        user.setBanned(!user.isBanned());
+        userRepo.save(user);
+    }
+
+    public User takeCurrentUser(User user) {
+       return userRepo.findById(user.getId()).orElse(null);
+    }
 }

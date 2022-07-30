@@ -24,6 +24,7 @@ create table usr
     email           varchar(255),
     password        varchar(255) not null,
     username        varchar(255) not null,
+    banned          boolean      not null default false,
     primary key (id)
 );
 

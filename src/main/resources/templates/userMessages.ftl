@@ -1,7 +1,19 @@
 <#import "parts/common.ftl" as c>
+<#include "parts/security.ftl">
 
 <@c.page>
     <h3>${userChannel.username}</h3>
+    <#if isAdmin && !userChannel.isAdmin()>
+        <#if userChannel.banned>
+            <a class="btn btn-success" href="/user/ban/${userChannel.id}">
+                Unban
+            </a>
+        <#else>
+            <a class="btn btn-danger" href="/user/ban/${userChannel.id}">
+                Ban
+            </a>
+        </#if>
+    </#if>
     <#if !isCurrentUser>
         <#if isSubscriber>
             <a class="btn btn-info" href="/user/unsubscribe/${userChannel.id}">Unsubscribe</a>

@@ -1,5 +1,5 @@
 <#macro pager url page>
-    <#if (page.totalPages > 7) >
+    <#if page.totalPages gt 7>
         <#assign
         totalPages = page.totalPages
         pageNumber = page.number + 1

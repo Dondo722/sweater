@@ -9,7 +9,10 @@
             </form>
         </div>
     </div>
-
-    <#include "parts/messageEdit.ftl" />
+    <#if !user.isBanned()>
+        <#include "parts/messageEdit.ftl" />
+        <#else >
+        <h5>Banned</h5>
+    </#if>
     <#include "parts/messageList.ftl" />
 </@c.page>

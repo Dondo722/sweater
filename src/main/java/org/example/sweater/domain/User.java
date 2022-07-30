@@ -52,6 +52,7 @@ public class User implements UserDetails {
     )
     private Set<User> subscriptions = new HashSet<>();
 
+    private boolean banned;
 
     public boolean isAdmin() {
         return roles.contains(Role.ADMIN);
@@ -160,6 +161,14 @@ public class User implements UserDetails {
 
     public void setSubscriptions(Set<User> subscriptions) {
         this.subscriptions = subscriptions;
+    }
+
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
 
     @Override

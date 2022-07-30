@@ -6,6 +6,7 @@ import org.example.sweater.domain.User;
 import org.example.sweater.domain.dto.MessageDto;
 import org.example.sweater.repos.MessageRepository;
 import org.example.sweater.service.MessageService;
+import org.example.sweater.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,9 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private UserService userService;
+
     @Value("${upload.path}")
     private String uploadPath;
 
@@ -54,6 +58,7 @@ public class MessageController {
                        @AuthenticationPrincipal User user) {
         Page<MessageDto> page = messageService.messageList(pageable, filter, user);
 
+        model.addAttribute("user", userService.takeCurrentUser(user));
         model.addAttribute("url", "/main");
         model.addAttribute("page", page);
         model.addAttribute("filter", filter);
@@ -65,10 +70,13 @@ public class MessageController {
                       @Valid Message message,
                       BindingResult bindingResult,
                       Model model,
-                      @RequestParam MultipartFile file)
+                      @RequestParam MultipartFile file,
+                      @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable)
             throws IOException {
+        if (userService.takeCurrentUser(user).isBanned()) {
+            return "redirect:/main";
+        }
         message.setAuthor(user);
-
         if (bindingResult.hasErrors()) {
             Map<String, String> errorsMap = ControllerUtil.getErrorsMap(bindingResult);
             model.mergeAttributes(errorsMap);
@@ -80,10 +88,11 @@ public class MessageController {
             messageRepository.save(message);
         }
 
-        Iterable<Message> messages = messageRepository.findAll();
-        model.addAttribute("messages", messages);
+        Page<MessageDto> page = messageRepository.findAll(pageable, user);
+        model.addAttribute("page", page);
+        model.addAttribute("url", "/user-messages");
 
-        return "main";
+        return "redirect:/main";
     }
 
     private void saveFile(Message message, MultipartFile file) throws IOException {
