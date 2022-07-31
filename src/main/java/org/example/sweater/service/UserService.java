@@ -20,9 +20,6 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepo;
 
     @Autowired
-    private MailSenderService mailSenderService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -43,22 +40,9 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             userRepo.save(user);
-
-            sendActivationMessage(user);
             return true;
         }
         return false;
-    }
-
-    private void sendActivationMessage(User user) {
-        if (!StringUtils.isEmpty(user.getEmail())) {
-            String message = String.format(
-                    "Hello, %s! \n " +
-                            "Welcome to Sweater. Please, visit next link:" +
-                            "http://localhost:8080/activate/%s",
-                    user.getUsername(), user.getActivationCode());
-            mailSenderService.send(user.getEmail(), "Activation code", message);
-        }
     }
 
     public boolean activateUser(String code) {
@@ -111,9 +95,6 @@ public class UserService implements UserDetailsService {
         }
 
         userRepo.save(user);
-        if (isEmailChanged) {
-            sendActivationMessage(user);
-        }
     }
 
     public void subscribe(User currentUser, User user) {

@@ -1,5 +1,5 @@
 <a class="btn btn-primary" data-toggle="collapse" href="#sendMessage" role="button" aria-expanded="false" aria-controls="collapseExample">
-    Edit message
+        Save message
 </a>
 <div class="collapse <#if message??>show</#if>" id="sendMessage">
     <div class="form-group mt-3">

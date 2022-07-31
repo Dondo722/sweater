@@ -7,9 +7,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -30,9 +26,6 @@ public class UserServiceTest {
 
     @MockBean
     private UserRepository userRepo;
-
-    @MockBean
-    private MailSenderService mailSender;
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -51,10 +44,6 @@ public class UserServiceTest {
         Assert.assertTrue(CoreMatchers.is(user.getRoles()).matches(Collections.singleton(Role.USER)));
 
         verify(userRepo, Mockito.times(1)).save(user);
-        verify(mailSender, Mockito.times(1))
-                .send(ArgumentMatchers.eq(user.getEmail()),
-                        ArgumentMatchers.anyString(),
-                        ArgumentMatchers.anyString());
     }
 
     @Test
@@ -71,10 +60,6 @@ public class UserServiceTest {
 
         Assert.assertFalse(isUserCreated);
         verify(userRepo, Mockito.times(0)).save(any());
-        verify(mailSender, Mockito.times(0))
-                .send(ArgumentMatchers.anyString(),
-                        ArgumentMatchers.anyString(),
-                        ArgumentMatchers.anyString());
     }
 
     @Test
